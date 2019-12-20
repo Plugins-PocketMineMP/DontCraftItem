@@ -90,7 +90,7 @@ class AddCraftBanCommand extends Command{
                     $sender->sendMessage(TextFormat::YELLOW . 'The database is empty.');
                     break;
                 }
-                $sender->sendMessage(TextFormat::YELLOW . 'Ban list: ' . implode(", ", array_map(function(int $id) : string{ return (BlockFactory::get($id))->getName(); }, $this->plugin->db['ban-item'])));
+                $sender->sendMessage(TextFormat::YELLOW . 'Ban list: ' . implode(", ", array_map(function(int $id) : string{ return (BlockFactory::get($id))->getName(); }, array_keys($this->plugin->db['ban-item']))));
                 break;
             default:
                 $sender->sendMessage(TextFormat::YELLOW . $this->getUsage());
