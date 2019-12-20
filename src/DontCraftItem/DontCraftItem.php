@@ -2,11 +2,11 @@
 declare(strict_types=1);
 namespace DontCraftItem;
 
+use pocketmine\block\BlockFactory;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\inventory\CraftItemEvent;
 use pocketmine\event\Listener;
-use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
@@ -86,19 +86,11 @@ class AddCraftBanCommand extends Command{
                 $sender->sendMessage(TextFormat::YELLOW . 'Success');
                 break;
             case 'list':
-                $arr = [];
-                foreach($this->plugin->db['ban-item'] as $item => $value){
-                    array_push($arr, array('text' => '- ' . $item));
+                if(empty($this->plugin->db['ban-item'])){
+                    $sender->sendMessage(TextFormat::YELLOW . 'The database is empty.');
+                    break;
                 }
-                $packet = new ModalFormRequestPacket();
-                $packet->formId = 11119;
-                $packet->formData = json_encode([
-                        'type' => 'form',
-                        'title' => 'CraftBan List',
-                        'content' => 'This is List!!',
-                        'buttons' => $arr
-                ]);
-                $sender->sendDataPacket($packet);
+                $sender->sendMessage(TextFormat::YELLOW . 'Ban list: ' . implode(", ", array_map(function(int $id) : string{ return (BlockFactory::get($id))->getName(); }, $this->plugin->db['ban-item'])));
                 break;
             default:
                 $sender->sendMessage(TextFormat::YELLOW . $this->getUsage());
